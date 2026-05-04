@@ -205,7 +205,7 @@ export default function Home() {
       style={{
         padding: 30,
         fontFamily: "Arial",
-        background: "#f4f6f8",
+        background: "#0f172a",
         minHeight: "100vh",
       }}
     >
@@ -213,12 +213,23 @@ export default function Home() {
         style={{
           maxWidth: 1100,
           margin: "0 auto",
-          background: "#fff",
+          background: "#111827",
+          color: "#fff",
           padding: 25,
           borderRadius: 12,
         }}
       >
-        <h1>Confia Grifes</h1>
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+  <img 
+    src="/logo.png" 
+    alt="Confia Grifes" 
+    style={{ width: 200, marginBottom: 10 }}
+  />
+  <h1 style={{ margin: 0 }}>Confia Grifes</h1>
+  <p style={{ color: "#666", marginTop: 5 }}>
+    Define sua identidade
+  </p>
+</div>
 
         <h2>Resumo Financeiro</h2>
 
