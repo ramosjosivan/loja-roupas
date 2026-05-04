@@ -218,7 +218,7 @@ export default function Home() {
           borderRadius: 12,
         }}
       >
-        <h1>Loja de Roupas</h1>
+        <h1>Confia Grifes</h1>
 
         <h2>Resumo Financeiro</h2>
 
