@@ -31,48 +31,15 @@ export default function Home() {
     localStorage.setItem("vendas", JSON.stringify(vendas));
   }, [vendas]);
 
-  const totalItens = produtos.reduce((acc, p) => acc + p.quantidade, 0);
-
-  const valorInvestido = produtos.reduce(
-    (acc, p) => acc + p.quantidade * p.compra,
-    0
-  );
-
-  const valorVendaTotal = produtos.reduce(
-    (acc, p) => acc + p.quantidade * p.venda,
-    0
-  );
-
-  const lucroPrevisto = valorVendaTotal - valorInvestido;
-
-  const faturamentoReal = vendas.reduce(
-    (acc, v) => acc + v.valorVendaTotal,
-    0
-  );
-
-  const lucroReal = vendas.reduce((acc, v) => acc + v.lucroTotal, 0);
-
   const cadastrar = () => {
-    if (!nome || !quantidade || !compra || !venda) {
-      alert("Preencha todos os campos.");
-      return;
-    }
-
-    if (
-      isNaN(Number(quantidade)) ||
-      isNaN(Number(compra)) ||
-      isNaN(Number(venda))
-    ) {
-      alert("Digite valores válidos.");
-      return;
-    }
+    if (!nome || !quantidade || !compra || !venda) return;
 
     const novo = {
       id: Date.now(),
       nome,
-      quantidade: Number(quantidade) || 0,
-      compra: Number(compra) || 0,
-      venda: Number(venda) || 0,
+      quantidade: Number(quantidade),
+      compra: Number(compra),
+      venda: Number(venda),
     };
 
     setProdutos([novo, ...produtos]);
@@ -85,172 +52,91 @@ export default function Home() {
 
   const vender = (id: number) => {
     const produto = produtos.find((p) => p.id === id);
+    if (!produto || produto.quantidade <= 0) return;
 
-    if (!produto || produto.quantidade <= 0) {
-      alert("Produto sem estoque.");
-      return;
-    }
+    const lucro = produto.venda - produto.compra;
 
-    const lucroUnitario = produto.venda - produto.compra;
-
-    const novaVenda = {
-      id: Date.now(),
-      produtoNome: produto.nome,
-      quantidade: 1,
-      valorVendaTotal: produto.venda,
-      lucroTotal: lucroUnitario,
-      data: new Date().toLocaleString("pt-BR"),
-    };
-
-    setVendas([novaVenda, ...vendas]);
+    setVendas([
+      {
+        id: Date.now(),
+        produtoNome: produto.nome,
+        valorVendaTotal: produto.venda,
+        lucroTotal: lucro,
+        data: new Date().toLocaleString("pt-BR"),
+      },
+      ...vendas,
+    ]);
 
     setProdutos((prev) =>
       prev.map((p) =>
-        p.id === id && p.quantidade > 0
-          ? { ...p, quantidade: p.quantidade - 1 }
-          : p
+        p.id === id ? { ...p, quantidade: p.quantidade - 1 } : p
       )
     );
   };
 
-  const excluirProduto = (id: number) => {
-    if (!confirm("Excluir produto?")) return;
-    setProdutos((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const excluirVenda = (id: number) => {
-    if (!confirm("Excluir venda?")) return;
-    setVendas((prev) => prev.filter((v) => v.id !== id));
-  };
-
-  const limparHistorico = () => {
-    if (!confirm("Limpar histórico?")) return;
-    setVendas([]);
-  };
-
-  const formatarMoeda = (valor: number) => {
-    return valor.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  };
-
-  const inputStyle = {
-    padding: 12,
-    borderRadius: 8,
-    border: "1px solid #333",
-    fontSize: 16,
-    background: "#0f172a",
-    color: "#fff",
-  };
-
-  const buttonStyle = {
-    marginTop: 15,
-    padding: "12px 22px",
-    borderRadius: 8,
-    border: "none",
-    background: "#22c55e",
-    color: "#000",
-    cursor: "pointer",
-    fontWeight: "bold",
-  };
-
-  const deleteButtonStyle = {
-    marginTop: 10,
-    marginLeft: 8,
-    padding: "8px 14px",
-    borderRadius: 6,
-    border: "none",
-    background: "#ef4444",
-    color: "#fff",
-    cursor: "pointer",
-  };
-
-  const cardStyle = {
-    listStyle: "none",
-    marginBottom: 12,
-    padding: 16,
-    borderRadius: 10,
-    background: "#1e293b",
-    border: "1px solid #333",
-  };
-
-  const resumoCard = {
-    background: "#1e293b",
-    border: "1px solid #333",
-    borderRadius: 10,
-    padding: 15,
-  };
+  const formatar = (v: number) =>
+    v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
-    <div style={{ padding: 30, background: "#0f172a", minHeight: "100vh", color: "#fff" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ background: "#0f172a", minHeight: "100vh", color: "#fff" }}>
+      
+      {/* HEADER */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: 70,
+          background: "#020617",
+          display: "flex",
+          alignItems: "center",
+          padding: "0 20px",
+          borderBottom: "1px solid #1e293b",
+          zIndex: 1000,
+        }}
+      >
+        <img src="/logo.png" style={{ width: 50, marginRight: 10 }} />
+        <div>
+          <strong>Confia Grifes</strong>
+          <p style={{ fontSize: 12, color: "#aaa", margin: 0 }}>
+            Define sua identidade
+          </p>
+        </div>
+      </div>
 
-        {/* LOGO */}
-        <div style={{ textAlign: "center", marginBottom: 30 }}>
-          <img src="/logo.png" alt="Confia Grifes" style={{ width: 220 }} />
-          <h1>Confia Grifes</h1>
-          <p style={{ color: "#aaa" }}>Define sua identidade</p>
+      {/* CONTEÚDO */}
+      <div style={{ padding: "100px 20px", maxWidth: 1000, margin: "0 auto" }}>
+        
+        <h2>Cadastrar Produto</h2>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10 }}>
+          <input placeholder="Nome" onChange={(e) => setNome(e.target.value)} />
+          <input type="number" placeholder="Qtd" onChange={(e) => setQuantidade(e.target.value)} />
+          <input type="number" placeholder="Compra" onChange={(e) => setCompra(e.target.value)} />
+          <input type="number" placeholder="Venda" onChange={(e) => setVenda(e.target.value)} />
         </div>
 
-        {/* RESUMO */}
-        <h2>Resumo Financeiro</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 10 }}>
-          <div style={resumoCard}>Itens: {totalItens}</div>
-          <div style={resumoCard}>Investido: {formatarMoeda(valorInvestido)}</div>
-          <div style={resumoCard}>Venda Prevista: {formatarMoeda(valorVendaTotal)}</div>
-          <div style={resumoCard}>Lucro Previsto: {formatarMoeda(lucroPrevisto)}</div>
-          <div style={resumoCard}>Faturamento: {formatarMoeda(faturamentoReal)}</div>
-          <div style={resumoCard}>Lucro Real: {formatarMoeda(lucroReal)}</div>
-        </div>
+        <button onClick={cadastrar} style={{ marginTop: 10 }}>
+          Cadastrar
+        </button>
 
-        {/* CADASTRO */}
-        <h2 style={{ marginTop: 30 }}>Cadastrar Produto</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
-          <input style={inputStyle} placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
-          <input style={inputStyle} type="number" placeholder="Qtd" value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
-          <input style={inputStyle} type="number" placeholder="Compra" value={compra} onChange={(e) => setCompra(e.target.value)} />
-          <input style={inputStyle} type="number" placeholder="Venda" value={venda} onChange={(e) => setVenda(e.target.value)} />
-        </div>
-
-        <button onClick={cadastrar} style={buttonStyle}>Cadastrar</button>
-
-        {/* PRODUTOS */}
         <h2 style={{ marginTop: 30 }}>Produtos</h2>
-        <ul style={{ padding: 0 }}>
-          {produtos.map((p) => {
-            const lucro = p.venda - p.compra;
-            return (
-              <li key={p.id} style={cardStyle}>
-                <strong>{p.nome}</strong><br />
-                Estoque: {p.quantidade} | Compra: {formatarMoeda(p.compra)} | Venda: {formatarMoeda(p.venda)} | Lucro: {formatarMoeda(lucro)}
-                <br />
-                <button onClick={() => vender(p.id)} style={buttonStyle}>Vender</button>
-                <button onClick={() => excluirProduto(p.id)} style={deleteButtonStyle}>Excluir</button>
-              </li>
-            );
-          })}
-        </ul>
 
-        {/* HISTÓRICO */}
-        <h2>Histórico de Vendas</h2>
-        {vendas.length > 0 && (
-          <button onClick={limparHistorico} style={deleteButtonStyle}>Limpar histórico</button>
-        )}
+        {produtos.map((p) => (
+          <div key={p.id} style={{ marginBottom: 10 }}>
+            {p.nome} | Estoque: {p.quantidade}
+            <button onClick={() => vender(p.id)}>Vender</button>
+          </div>
+        ))}
 
-        <ul style={{ padding: 0 }}>
-          {vendas.length === 0 && <p>Nenhuma venda ainda</p>}
-          {vendas.map((v) => (
-            <li key={v.id} style={cardStyle}>
-              <strong>{v.produtoNome}</strong><br />
-              {v.data}<br />
-              Venda: {formatarMoeda(v.valorVendaTotal)} | Lucro: {formatarMoeda(v.lucroTotal)}
-              <br />
-              <button onClick={() => excluirVenda(v.id)} style={deleteButtonStyle}>Excluir</button>
-            </li>
-          ))}
-        </ul>
+        <h2>Histórico</h2>
 
+        {vendas.map((v) => (
+          <div key={v.id}>
+            {v.produtoNome} - {formatar(v.valorVendaTotal)}
+          </div>
+        ))}
       </div>
     </div>
   );
