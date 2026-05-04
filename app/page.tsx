@@ -95,11 +95,8 @@ export default function Home() {
 
     const novaVenda = {
       id: Date.now(),
-      produtoId: produto.id,
       produtoNome: produto.nome,
       quantidade: 1,
-      valorCompraUnitario: produto.compra,
-      valorVendaUnitario: produto.venda,
       valorVendaTotal: produto.venda,
       lucroTotal: lucroUnitario,
       data: new Date().toLocaleString("pt-BR"),
@@ -117,23 +114,17 @@ export default function Home() {
   };
 
   const excluirProduto = (id: number) => {
-    const confirmar = confirm("Tem certeza que deseja excluir este produto?");
-    if (!confirmar) return;
-
+    if (!confirm("Excluir produto?")) return;
     setProdutos((prev) => prev.filter((p) => p.id !== id));
   };
 
   const excluirVenda = (id: number) => {
-    const confirmar = confirm("Deseja excluir esta venda do histórico?");
-    if (!confirmar) return;
-
+    if (!confirm("Excluir venda?")) return;
     setVendas((prev) => prev.filter((v) => v.id !== id));
   };
 
   const limparHistorico = () => {
-    const confirmar = confirm("Tem certeza que deseja limpar todo o histórico?");
-    if (!confirmar) return;
-
+    if (!confirm("Limpar histórico?")) return;
     setVendas([]);
   };
 
@@ -147,8 +138,10 @@ export default function Home() {
   const inputStyle = {
     padding: 12,
     borderRadius: 8,
-    border: "1px solid #ccc",
+    border: "1px solid #333",
     fontSize: 16,
+    background: "#0f172a",
+    color: "#fff",
   };
 
   const buttonStyle = {
@@ -156,39 +149,21 @@ export default function Home() {
     padding: "12px 22px",
     borderRadius: 8,
     border: "none",
-    background: "#111827",
-    color: "#fff",
+    background: "#22c55e",
+    color: "#000",
     cursor: "pointer",
-    fontSize: 16,
     fontWeight: "bold",
-  };
-
-  const smallButtonStyle = {
-    marginTop: 10,
-    marginRight: 8,
-    padding: "8px 14px",
-    borderRadius: 6,
-    border: "none",
-    background: "#2563eb",
-    color: "#fff",
-    cursor: "pointer",
   };
 
   const deleteButtonStyle = {
     marginTop: 10,
+    marginLeft: 8,
     padding: "8px 14px",
     borderRadius: 6,
     border: "none",
-    background: "#dc2626",
+    background: "#ef4444",
     color: "#fff",
     cursor: "pointer",
-  };
-
-  const cardResumoStyle = {
-    background: "#f9fafb",
-    border: "1px solid #ddd",
-    borderRadius: 10,
-    padding: 15,
   };
 
   const cardStyle = {
@@ -196,201 +171,86 @@ export default function Home() {
     marginBottom: 12,
     padding: 16,
     borderRadius: 10,
-    background: "#f9fafb",
-    border: "1px solid #ddd",
+    background: "#1e293b",
+    border: "1px solid #333",
+  };
+
+  const resumoCard = {
+    background: "#1e293b",
+    border: "1px solid #333",
+    borderRadius: 10,
+    padding: 15,
   };
 
   return (
-    <div
-      style={{
-        padding: 30,
-        fontFamily: "Arial",
-        background: "#0f172a",
-        minHeight: "100vh",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          background: "#111827",
-          color: "#fff",
-          padding: 25,
-          borderRadius: 12,
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
-  <img 
-    src="/logo.png" 
-    alt="Confia Grifes" 
-    style={{ width: 200, marginBottom: 10 }}
-  />
-  <h1 style={{ margin: 0 }}>Confia Grifes</h1>
-  <p style={{ color: "#666", marginTop: 5 }}>
-    Define sua identidade
-  </p>
-</div>
+    <div style={{ padding: 30, background: "#0f172a", minHeight: "100vh", color: "#fff" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
+        {/* LOGO */}
+        <div style={{ textAlign: "center", marginBottom: 30 }}>
+          <img src="/logo.png" alt="Confia Grifes" style={{ width: 220 }} />
+          <h1>Confia Grifes</h1>
+          <p style={{ color: "#aaa" }}>Define sua identidade</p>
+        </div>
+
+        {/* RESUMO */}
         <h2>Resumo Financeiro</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(6, 1fr)",
-            gap: 12,
-            marginBottom: 30,
-          }}
-        >
-          <div style={cardResumoStyle}>
-            <strong>Itens em estoque</strong>
-            <p style={{ fontSize: 20, margin: "8px 0 0" }}>{totalItens}</p>
-          </div>
-
-          <div style={cardResumoStyle}>
-            <strong>Valor investido</strong>
-            <p style={{ fontSize: 20, margin: "8px 0 0" }}>
-              {formatarMoeda(valorInvestido)}
-            </p>
-          </div>
-
-          <div style={cardResumoStyle}>
-            <strong>Venda prevista</strong>
-            <p style={{ fontSize: 20, margin: "8px 0 0" }}>
-              {formatarMoeda(valorVendaTotal)}
-            </p>
-          </div>
-
-          <div style={cardResumoStyle}>
-            <strong>Lucro previsto</strong>
-            <p style={{ fontSize: 20, margin: "8px 0 0" }}>
-              {formatarMoeda(lucroPrevisto)}
-            </p>
-          </div>
-
-          <div style={cardResumoStyle}>
-            <strong>Faturamento real</strong>
-            <p style={{ fontSize: 20, margin: "8px 0 0" }}>
-              {formatarMoeda(faturamentoReal)}
-            </p>
-          </div>
-
-          <div style={cardResumoStyle}>
-            <strong>Lucro real</strong>
-            <p style={{ fontSize: 20, margin: "8px 0 0" }}>
-              {formatarMoeda(lucroReal)}
-            </p>
-          </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 10 }}>
+          <div style={resumoCard}>Itens: {totalItens}</div>
+          <div style={resumoCard}>Investido: {formatarMoeda(valorInvestido)}</div>
+          <div style={resumoCard}>Venda Prevista: {formatarMoeda(valorVendaTotal)}</div>
+          <div style={resumoCard}>Lucro Previsto: {formatarMoeda(lucroPrevisto)}</div>
+          <div style={resumoCard}>Faturamento: {formatarMoeda(faturamentoReal)}</div>
+          <div style={resumoCard}>Lucro Real: {formatarMoeda(lucroReal)}</div>
         </div>
 
-        <h2>Cadastrar Produto</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 12,
-          }}
-        >
-          <input
-            style={inputStyle}
-            placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-          />
-
-          <input
-            type="number"
-            style={inputStyle}
-            placeholder="Quantidade"
-            value={quantidade}
-            onChange={(e) => setQuantidade(e.target.value)}
-          />
-
-          <input
-            type="number"
-            step="0.01"
-            style={inputStyle}
-            placeholder="Valor Compra"
-            value={compra}
-            onChange={(e) => setCompra(e.target.value)}
-          />
-
-          <input
-            type="number"
-            step="0.01"
-            style={inputStyle}
-            placeholder="Valor Venda"
-            value={venda}
-            onChange={(e) => setVenda(e.target.value)}
-          />
+        {/* CADASTRO */}
+        <h2 style={{ marginTop: 30 }}>Cadastrar Produto</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+          <input style={inputStyle} placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+          <input style={inputStyle} type="number" placeholder="Qtd" value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
+          <input style={inputStyle} type="number" placeholder="Compra" value={compra} onChange={(e) => setCompra(e.target.value)} />
+          <input style={inputStyle} type="number" placeholder="Venda" value={venda} onChange={(e) => setVenda(e.target.value)} />
         </div>
 
-        <button onClick={cadastrar} style={buttonStyle}>
-          Cadastrar
-        </button>
+        <button onClick={cadastrar} style={buttonStyle}>Cadastrar</button>
 
+        {/* PRODUTOS */}
         <h2 style={{ marginTop: 30 }}>Produtos</h2>
-
         <ul style={{ padding: 0 }}>
           {produtos.map((p) => {
             const lucro = p.venda - p.compra;
-            const lucroTotalProduto = lucro * p.quantidade;
-
             return (
               <li key={p.id} style={cardStyle}>
-                <strong>{p.nome}</strong>
+                <strong>{p.nome}</strong><br />
+                Estoque: {p.quantidade} | Compra: {formatarMoeda(p.compra)} | Venda: {formatarMoeda(p.venda)} | Lucro: {formatarMoeda(lucro)}
                 <br />
-                Estoque: {p.quantidade} | Compra: {formatarMoeda(p.compra)} |
-                Venda: {formatarMoeda(p.venda)} | Lucro unitário:{" "}
-                {formatarMoeda(lucro)} | Lucro total:{" "}
-                {formatarMoeda(lucroTotalProduto)}
-                <br />
-
-                <button onClick={() => vender(p.id)} style={smallButtonStyle}>
-                  Vender
-                </button>
-
-                <button
-                  onClick={() => excluirProduto(p.id)}
-                  style={deleteButtonStyle}
-                >
-                  Excluir
-                </button>
+                <button onClick={() => vender(p.id)} style={buttonStyle}>Vender</button>
+                <button onClick={() => excluirProduto(p.id)} style={deleteButtonStyle}>Excluir</button>
               </li>
             );
           })}
         </ul>
 
-        <h2 style={{ marginTop: 30 }}>Histórico de Vendas</h2>
-
+        {/* HISTÓRICO */}
+        <h2>Histórico de Vendas</h2>
         {vendas.length > 0 && (
-          <button onClick={limparHistorico} style={deleteButtonStyle}>
-            Limpar histórico
-          </button>
+          <button onClick={limparHistorico} style={deleteButtonStyle}>Limpar histórico</button>
         )}
 
-        <ul style={{ padding: 0, marginTop: 15 }}>
-          {vendas.length === 0 && <p>Nenhuma venda registrada ainda.</p>}
-
+        <ul style={{ padding: 0 }}>
+          {vendas.length === 0 && <p>Nenhuma venda ainda</p>}
           {vendas.map((v) => (
             <li key={v.id} style={cardStyle}>
-              <strong>{v.produtoNome}</strong>
+              <strong>{v.produtoNome}</strong><br />
+              {v.data}<br />
+              Venda: {formatarMoeda(v.valorVendaTotal)} | Lucro: {formatarMoeda(v.lucroTotal)}
               <br />
-              Data: {v.data}
-              <br />
-              Quantidade: {v.quantidade} | Venda:{" "}
-              {formatarMoeda(v.valorVendaTotal)} | Lucro:{" "}
-              {formatarMoeda(v.lucroTotal)}
-              <br />
-              <button
-                onClick={() => excluirVenda(v.id)}
-                style={deleteButtonStyle}
-              >
-                Excluir venda
-              </button>
+              <button onClick={() => excluirVenda(v.id)} style={deleteButtonStyle}>Excluir</button>
             </li>
           ))}
         </ul>
+
       </div>
     </div>
   );
